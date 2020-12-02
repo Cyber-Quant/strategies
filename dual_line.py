@@ -66,14 +66,14 @@ class DualLine:
                 continue
             if i == start:
                 continue
-            if ema[-1] > ema[-2] and ma[-1] > ma[-2] <= ma[-3]:
+            if ema[i - 1] > ema[i - 2] and ma[i - 1] > ma[i - 2] <= ma[i - 3]:
                 state = 'b'
                 if state != old_state:
                     buy_prices.append(closes[i])
                     buy_dates.append(dates[i])
                     buy_index.append(i)
                     old_state = state
-            elif ema[-1] < ema[-2] and ma[-1] < ma[-2] >= ma[-3]:
+            elif ema[i - 1] < ema[i - 2] and ma[i - 1] < ma[i - 2] >= ma[i - 3]:
                 state = 's'
                 if state != old_state:
                     sell_prices.append(closes[i])
