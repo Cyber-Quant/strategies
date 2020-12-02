@@ -1,0 +1,156 @@
+diff --git a/pages/backtest.py b/pages/backtest.py
+index fcc24eb..7dbfae0 100644
+--- a/pages/backtest.py
++++ b/pages/backtest.py
+@@ -10,6 +10,7 @@ from conf.conf import fav_stocks_config_path, FIRST_DAY_YEAR, \
+     FIRST_DAY_MONTH, FIRST_DAY_DAY
+ from db.models import AStockInfo
+ from strategies.boll import BOLL, BOLLBacktest, BOLLInfo
++from strategies.dual_line import DualLine, DualLineBacktest, DualLineInfo
+ from strategies.kdj import KDJ, KDJBacktest, KDJInfo
+ from strategies.macd import MACD, MACDBacktest, MACDInfo
+ from strategies.rsi import RSI, RSIBacktest, RSIInfo
+@@ -231,6 +232,7 @@ class Backtest(QWidget):
+         tax = float(self.tax_input.text()) / 1000
+         # NEW STRATEGIES #
+         boll_info = BOLLInfo()
++        dual_line_info = DualLineInfo()
+         kdj_info = KDJInfo()
+         macd_info = MACDInfo()
+         rsi_info = RSIInfo()
+@@ -240,6 +242,10 @@ class Backtest(QWidget):
+             self.backtest_thread = BOLLBacktest(stocks, s_date, e_date,
+                                                 init_money, fee,
+                                                 pass_fee, tax)
++        elif self.current_strategy_name == dual_line_info.name:
++            self.backtest_thread = DualLineBacktest(stocks, s_date, e_date,
++                                                    init_money, fee,
++                                                    pass_fee, tax)
+         elif self.current_strategy_name == kdj_info.name:
+             self.backtest_thread = KDJBacktest(stocks, s_date, e_date,
+                                                init_money, fee,
+@@ -310,6 +316,7 @@ class Backtest(QWidget):
+         tax = float(self.tax_input.text()) / 1000
+         # NEW STRATEGIES #
+         boll_info = BOLLInfo()
++        dual_line_info = DualLineInfo()
+         kdj_info = KDJInfo()
+         macd_info = MACDInfo()
+         rsi_info = RSIInfo()
+@@ -317,6 +324,8 @@ class Backtest(QWidget):
+         wr_info = WRInfo()
+         if self.current_strategy_name == boll_info.name:
+             backtest = BOLL()
++        elif self.current_strategy_name == dual_line_info.name:
++            backtest = DualLine()
+         elif self.current_strategy_name == kdj_info.name:
+             backtest = KDJ()
+         elif self.current_strategy_name == macd_info.name:
+diff --git a/pages/choose.py b/pages/choose.py
+index 6eace7a..d8777ef 100644
+--- a/pages/choose.py
++++ b/pages/choose.py
+@@ -7,6 +7,7 @@ from qtpy.QtCore import *
+ from conf.conf import fav_stocks_config_path, apply_strategies_config_path
+ from db.models import AStockInfo
+ from strategies.boll import BOLLChoose, BOLLInfo
++from strategies.dual_line import DualLineChoose, DualLineInfo
+ from strategies.kdj import KDJChoose, KDJInfo
+ from strategies.macd import MACDChoose, MACDInfo
+ from strategies.rsi import RSIChoose, RSIInfo
+@@ -36,6 +37,7 @@ class Choose(Plots):
+         self.choose_thread = None
+         # TODO: make strategies plugin
+         # NEW STRATEGIES #
++        self.dual_line_info = DualLineInfo()
+         self.stairs_info = StairsInfo()
+         self.volume_increase_info = VolumeIncreaseInfo()
+         self.wr_info = WRInfo()
+@@ -247,7 +249,10 @@ class Choose(Plots):
+                 self.enable_all()
+             elif len(self.apply_strategies) == 1:
+                 # NEW STRATEGIES #
+-                if self.apply_strategies[0] == self.stairs_info.name:
++                if self.apply_strategies[0] == self.dual_line_info.name:
++                    self.choose_thread = DualLineChoose(
++                        self.stocks_to_be_chosen)
++                elif self.apply_strategies[0] == self.stairs_info.name:
+                     self.choose_thread = StairsChoose(self.stocks_to_be_chosen)
+                 elif self.apply_strategies[0] == self.volume_increase_info.name:
+                     self.choose_thread = VolumeIncreaseChoose(
+diff --git a/pages/nav.py b/pages/nav.py
+index dcdc1a5..bf4acb7 100644
+--- a/pages/nav.py
++++ b/pages/nav.py
+@@ -11,6 +11,7 @@ from pages.config import Config
+ from pages.watch import Watch
+ from pages.backtest import Backtest
+ from strategies.boll import BOLLConfig, BOLLInfo
++from strategies.dual_line import DualLineConfig, DualLineInfo
+ from strategies.kdj import KDJConfig, KDJInfo
+ from strategies.macd import MACDConfig, MACDInfo
+ from strategies.rsi import RSIConfig, RSIInfo
+@@ -65,6 +66,7 @@ class Nav(QWidget):
+                 self.custom_watch = json.load(f)
+ 
+         # NEW STRATEGIES #
++        self.dual_line_info = DualLineInfo()
+         self.stairs_info = StairsInfo()
+         self.volume_increase_info = VolumeIncreaseInfo()
+         self.wr_info = WRInfo()
+@@ -73,6 +75,9 @@ class Nav(QWidget):
+         self.kdj_info = KDJInfo()
+         self.rsi_info = RSIInfo()
+         self.strategies = [
++            {'name': self.dual_line_info.name,
++             'choose': 'Y' if self.dual_line_info.choose_flag else 'N',
++             'watch': 'Y' if self.dual_line_info.watch_flag else 'N'},
+             {'name': self.stairs_info.name,
+              'choose': 'Y' if self.stairs_info.choose_flag else 'N',
+              'watch': 'Y' if self.stairs_info.watch_flag else 'N'},
+@@ -242,7 +247,8 @@ class Nav(QWidget):
+         self.stacked_window.addWidget(self.choose)
+ 
+         self.backtest = Backtest()
+-        self.backtest.fav_stock_changed_signal.connect(self.on_refresh_fav_table)
++        self.backtest.fav_stock_changed_signal.connect(
++            self.on_refresh_fav_table)
+         self.stacked_window.addWidget(self.backtest)
+ 
+         self.config = Config()
+@@ -271,6 +277,10 @@ class Nav(QWidget):
+         row = self.strategy_table.currentIndex().row()
+         name = self.strategy_table.item(row, 1).text()
+         # NEW STRATEGIES #
++        if name == self.dual_line_info.name:
++            cfg_dlg = DualLineConfig(self)
++            cfg_dlg.show()
++            cfg_dlg.exec_()
+         if name == self.stairs_info.name:
+             cfg_dlg = StairsConfig(self)
+             cfg_dlg.show()
+diff --git a/widgets/plots.py b/widgets/plots.py
+index caed262..331a7d5 100644
+--- a/widgets/plots.py
++++ b/widgets/plots.py
+@@ -5,6 +5,7 @@ from qtpy.QtWidgets import *
+ 
+ from strategies.common import get_latest_batch_data
+ from strategies.boll import BOLL
++from strategies.dual_line import DualLine
+ from strategies.kdj import KDJ
+ from strategies.macd import MACD
+ from strategies.rsi import RSI
+@@ -445,6 +446,12 @@ class Plots(QWidget):
+             downs = boll.calc_batch_down(closes)
+             data = [ups, middles, downs]
+             pen_colors = ['r', 'w', 'b']
++        elif self.current_indicatrix_name == self.dual_line_info.name:
++            dual_line = DualLine()
++            ema = dual_line.calc_ema(closes)
++            ma = dual_line.calc_ma(closes)
++            data = [ema, ma]
++            pen_colors = ['r', 'y']
+         else:
+             data = []
+             pen_colors = []
