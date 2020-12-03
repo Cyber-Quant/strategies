@@ -1,0 +1,21 @@
+diff --git a/strategies/boll.py b/strategies/boll.py
+index c5aab85..1966178 100644
+--- a/strategies/boll.py
++++ b/strategies/boll.py
+@@ -109,14 +109,14 @@ class BOLL:
+         for i in range(len(closes)):
+             if i < start:
+                 continue
+-            if highs[i] >= ups[i]:
++            if highs[i] <= ups[i]:
+                 state = 'b'
+                 if state != old_state:
+                     buy_prices.append(closes[i])
+                     buy_dates.append(dates[i])
+                     buy_index.append(i)
+                     old_state = state
+-            elif lows[i] < downs[i]:
++            elif lows[i] >= downs[i]:
+                 state = 's'
+                 if state != old_state:
+                     sell_prices.append(closes[i])
