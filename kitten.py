@@ -1,12 +1,10 @@
 import datetime
 import json
-import time
 
 from qtpy.QtWidgets import *
 from qtpy.QtGui import *
 from qtpy.QtCore import *
 
-from apis.realtime_price import fetch_sina_realtime_price
 from conf.conf import strategies_config_path
 from strategies.common import get_latest_batch_data, calc_batch_ma
 
