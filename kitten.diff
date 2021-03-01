@@ -119,7 +119,7 @@ index 8e67705..1f81763 100644
              cfg_dlg = WRConfig(self)
              cfg_dlg.show()
 diff --git a/widgets/plots.py b/widgets/plots.py
-index c89710f..27ed3d8 100644
+index fa8fa48..10b055d 100644
 --- a/widgets/plots.py
 +++ b/widgets/plots.py
 @@ -7,6 +7,7 @@ from strategies.common import get_latest_batch_data
