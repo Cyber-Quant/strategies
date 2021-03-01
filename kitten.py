@@ -1,10 +1,12 @@
 import datetime
 import json
+import time
 
 from qtpy.QtWidgets import *
 from qtpy.QtGui import *
 from qtpy.QtCore import *
 
+from apis.realtime_price import fetch_sina_realtime_price
 from conf.conf import strategies_config_path
 from strategies.common import get_latest_batch_data, calc_batch_ma
 
@@ -174,7 +176,7 @@ class KittenBacktest(QThread):
 
     def __init__(self, stocks, s_date, e_date, init_money, fee, pass_fee, tax,
                  parent=None):
-        super(TurtleBacktest, self).__init__(parent)
+        super(KittenBacktest, self).__init__(parent)
         self.codes = []
         self.names = []
         self.s_date = datetime.datetime.strptime(s_date, '%Y-%m-%d')
@@ -188,7 +190,7 @@ class KittenBacktest(QThread):
             self.names.append(stock['name'])
 
     def run(self):
-        turtle = Turtle()
+        kitten = Kitten()
 
         step = int(len(self.codes) / 100) + 1
         i = 0
@@ -199,7 +201,7 @@ class KittenBacktest(QThread):
             opens, closes, highs, lows, volumes, dates, \
             opening_index_slices, opening_price_slices, \
             closing_index_slices, closing_price_slices = \
-                turtle.backtest(code, self.s_date, self.e_date, self.init_money,
+                kitten.backtest(code, self.s_date, self.e_date, self.init_money,
                                 self.fee, self.pass_fee, self.tax)
             self.progress_signal.emit(j, code, self.names[i - 1],
                                       wpct, _return, max_drawdown)
