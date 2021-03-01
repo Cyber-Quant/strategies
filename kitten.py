@@ -62,7 +62,7 @@ class Kitten:
             return False
 
     def backtest(self, code, s_date, e_date, init_money, fee, pass_fee, tax):
-        dates, opens, closes, highs, lows, volumes, amount, \
+        dates, opens, closes, highs, lows, volumes, amount, turn, pct_chg, \
         ma_price, mv_volume = get_latest_batch_data(code, s_date=s_date,
                                                     e_date=e_date)
         mas = self.calc_batch_ma_indicator(closes)
@@ -153,7 +153,7 @@ class Kitten:
                closing_index_slices, closing_price_slices
 
     def choose(self, code):
-        dates, opens, closes, highs, lows, volumes, amount, \
+        dates, opens, closes, highs, lows, volumes, amount, turn, pct_chg, \
         ma_price, ma_volume = get_latest_batch_data(code)
         ma = calc_batch_ma(closes, self.m)
         last_ma = 0
