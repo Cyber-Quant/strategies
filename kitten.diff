@@ -47,7 +47,7 @@ index 58fc0da..7b22a90 100644
              backtest = MACD()
          elif self.current_strategy_name == rsi_info.name:
 diff --git a/pages/choose.py b/pages/choose.py
-index b353abf..1a139d9 100644
+index b4efd96..ad34841 100644
 --- a/pages/choose.py
 +++ b/pages/choose.py
 @@ -10,6 +10,7 @@ from db.models import AStockIndex
@@ -57,16 +57,16 @@ index b353abf..1a139d9 100644
 +from strategies.kitten import KittenChoose, KittenInfo
  from strategies.macd import MACDChoose, MACDInfo
  from strategies.mcst import MCSTInfo
- from strategies.rsi import RSIChoose, RSIInfo
-@@ -46,6 +47,7 @@ class Choose(Plots):
+ from strategies.percent_change import PercentChangeChoose, PercentChangeInfo
+@@ -48,6 +49,7 @@ class Choose(Plots):
          self.boll_info = BOLLInfo()
          self.dual_line_info = DualLineInfo()
          self.kdj_info = KDJInfo()
 +        self.kitten_info = KittenInfo()
          self.macd_info = MACDInfo()
          self.mcst_info = MCSTInfo()
-         self.rsi_info = RSIInfo()
-@@ -284,6 +286,8 @@ class Choose(Plots):
+         self.percent_change_info = PercentChangeInfo()
+@@ -288,6 +290,8 @@ class Choose(Plots):
                          self.stocks_to_be_chosen)
                  elif self.apply_strategies[0] == self.kdj_info.name:
                      self.choose_thread = KDJChoose(self.stocks_to_be_chosen)
@@ -74,9 +74,9 @@ index b353abf..1a139d9 100644
 +                    self.choose_thread = KittenChoose(self.stocks_to_be_chosen)
                  elif self.apply_strategies[0] == self.macd_info.name:
                      self.choose_thread = MACDChoose(self.stocks_to_be_chosen)
-                 elif self.apply_strategies[0] == self.rsi_info.name:
+                 elif self.apply_strategies[0] == self.percent_change_info.name:
 diff --git a/pages/nav.py b/pages/nav.py
-index 8e67705..1f81763 100644
+index 04ac83d..daffcf6 100644
 --- a/pages/nav.py
 +++ b/pages/nav.py
 @@ -14,6 +14,7 @@ from pages.watch import Watch
@@ -86,16 +86,16 @@ index 8e67705..1f81763 100644
 +from strategies.kitten import KittenConfig, KittenInfo
  from strategies.macd import MACDConfig, MACDInfo
  from strategies.mcst import MCSTInfo
- from strategies.rsi import RSIConfig, RSIInfo
-@@ -77,6 +78,7 @@ class Nav(QWidget):
-         self.turtle_info = TurtleInfo()
-         self.volume_increase_info = VolumeIncreaseInfo()
+ from strategies.percent_change import PercentChangeConfig, PercentChangeInfo
+@@ -81,6 +82,7 @@ class Nav(QWidget):
+         self.turn_over_info = TurnOverInfo()
+         self.percent_change_info = PercentChangeInfo()
          self.mcst_info = MCSTInfo()
 +        self.kitten_info = KittenInfo()
          self.wr_info = WRInfo()
          self.boll_info = BOLLInfo()
          self.macd_info = MACDInfo()
-@@ -113,6 +115,11 @@ class Nav(QWidget):
+@@ -127,6 +129,11 @@ class Nav(QWidget):
                  'choose': 'Y' if self.mcst_info.choose_flag else 'N',
                  'watch': 'Y' if self.mcst_info.watch_flag else 'N'
              },
@@ -107,8 +107,8 @@ index 8e67705..1f81763 100644
              {
                  'name': self.wr_info.name,
                  'choose': 'Y' if self.wr_info.choose_flag else 'N',
-@@ -346,6 +353,10 @@ class Nav(QWidget):
-             cfg_dlg = VolumeIncreaseConfig(self)
+@@ -368,6 +375,10 @@ class Nav(QWidget):
+             cfg_dlg = PercentChangeConfig(self)
              cfg_dlg.show()
              cfg_dlg.exec_()
 +        if name == self.kitten_info.name:
@@ -119,7 +119,7 @@ index 8e67705..1f81763 100644
              cfg_dlg = WRConfig(self)
              cfg_dlg.show()
 diff --git a/widgets/plots.py b/widgets/plots.py
-index fa8fa48..10b055d 100644
+index 678928e..13257c2 100644
 --- a/widgets/plots.py
 +++ b/widgets/plots.py
 @@ -7,6 +7,7 @@ from strategies.common import get_latest_batch_data
@@ -130,7 +130,7 @@ index fa8fa48..10b055d 100644
  from strategies.macd import MACD
  from strategies.mcst import MCST
  from strategies.rsi import RSI
-@@ -497,6 +498,13 @@ class Plots(QWidget):
+@@ -498,6 +499,13 @@ class Plots(QWidget):
              k_pen_colors = ['y']
              vol_data = []
              vol_pen_colors = []
