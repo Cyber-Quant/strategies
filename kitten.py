@@ -163,6 +163,9 @@ class Kitten:
             else:
                 return False
 
+        if len(closes) < 2:
+            return False
+            
         if 3 <= (closes[-2] - closes[-1]) / closes[-2] * 100 <= 5:
             return True
         else:
