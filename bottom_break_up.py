@@ -6,7 +6,8 @@ from qtpy.QtGui import *
 from qtpy.QtCore import *
 
 from conf.conf import strategies_config_path
-from strategies.common import get_latest_batch_data, calc_batch_ma, calc_wpct
+from strategies.common import calc_batch_ma, calc_batch_mav, calc_wpct, \
+    get_latest_batch_data
 
 
 class BottomBreakUpInfo:
@@ -60,12 +61,18 @@ class BottomBreakUp:
         ma += calc_batch_ma(close, 60)
         return ma
 
-    def _backtest(self, ma_10, ma20, ma_20, ma_30, ma_60, volumes, state):
-        r_ma_10 = ma_10.reverse()
-        r_ma_20 = ma_20.reverse()
-        r_ma_30 = ma_30.reverse()
-        r_ma_60 = ma_60.reverse()
-        r_vol = volumes.reverse()
+    def calc_mav(self, volume, period):
+        mav = calc_batch_mav(volume, period)
+        _mav = [0] * period
+        mav = _mav + mav
+        return mav
+
+    def _backtest(self, ma_10, ma_20, ma_30, ma_60, volumes, state):
+        r_ma_10 = ma_10[::-1]
+        r_ma_20 = ma_20[::-1]
+        r_ma_30 = ma_30[::-1]
+        r_ma_60 = ma_60[::-1]
+        r_vol = volumes[::-1]
 
         for i in range(self.m):
             if r_ma_60[self.n + i] > r_ma_30[self.n + i] > r_ma_20[self.n + i]:
@@ -104,11 +111,11 @@ class BottomBreakUp:
             if i < start:
                 continue
 
-            _ma_10 = ma_10[i - self.n - 1:i]
-            _ma_20 = ma_20[i - self.n - 1:i]
-            _ma_30 = ma_30[i - self.n - 1:i]
-            _ma_60 = ma_60[i - self.n - 1:i]
-            _volumes = volumes[i - self.n - 1:i]
+            _ma_10 = ma_10[i - self.m - self.n - 1:i]
+            _ma_20 = ma_20[i - self.m - self.n - 1:i]
+            _ma_30 = ma_30[i - self.m - self.n - 1:i]
+            _ma_60 = ma_60[i - self.m - self.n - 1:i]
+            _volumes = volumes[i - self.m - self.n - 1:i]
             ret = self._backtest(_ma_10, _ma_20, _ma_30, _ma_60,
                                  _volumes, old_state)
             if ret == 'b':
@@ -182,11 +189,11 @@ class BottomBreakUp:
     def choose(self, code):
         dates, opens, closes, highs, lows, volumes, amount, turn, pct_chg, \
         ma_price, ma_volume = get_latest_batch_data(code)
-        r_ma_10 = calc_batch_ma(closes, 10).reverse()
-        r_ma_20 = calc_batch_ma(closes, 20).reverse()
-        r_ma_30 = calc_batch_ma(closes, 30).reverse()
-        r_ma_60 = calc_batch_ma(closes, 60).reverse()
-        r_vol = volumes.reverse()
+        r_ma_10 = calc_batch_ma(closes, 10)[::-1]
+        r_ma_20 = calc_batch_ma(closes, 20)[::-1]
+        r_ma_30 = calc_batch_ma(closes, 30)[::-1]
+        r_ma_60 = calc_batch_ma(closes, 60)[::-1]
+        r_vol = volumes[::-1]
 
         if len(closes) < self.n + self.m:
             return False
