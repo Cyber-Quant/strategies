@@ -111,11 +111,11 @@ class BottomBreakUp:
             if i < start:
                 continue
 
-            _ma_10 = ma_10[i - self.m - self.n - 1:i]
-            _ma_20 = ma_20[i - self.m - self.n - 1:i]
-            _ma_30 = ma_30[i - self.m - self.n - 1:i]
-            _ma_60 = ma_60[i - self.m - self.n - 1:i]
-            _volumes = volumes[i - self.m - self.n - 1:i]
+            _ma_10 = ma_10[i - self.m - self.n:i]
+            _ma_20 = ma_20[i - self.m - self.n:i]
+            _ma_30 = ma_30[i - self.m - self.n:i]
+            _ma_60 = ma_60[i - self.m - self.n:i]
+            _volumes = volumes[i - self.m - self.n:i]
             ret = self._backtest(_ma_10, _ma_20, _ma_30, _ma_60,
                                  _volumes, old_state)
             if ret == 'b':
