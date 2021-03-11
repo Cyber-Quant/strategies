@@ -1,24 +1,24 @@
 diff --git a/pages/backtest.py b/pages/backtest.py
-index 58fc0da..7b22a90 100644
+index d935e88..58b5710 100644
 --- a/pages/backtest.py
 +++ b/pages/backtest.py
-@@ -12,6 +12,7 @@ from db.models import AStockIndex
+@@ -11,6 +11,7 @@ from conf.conf import fav_stocks_config_path, FIRST_DAY_YEAR, \
+ from db.models import AStockIndex
  from strategies.boll import BOLL, BOLLBacktest, BOLLInfo
- from strategies.dual_line import DualLine, DualLineBacktest, DualLineInfo
  from strategies.kdj import KDJ, KDJBacktest, KDJInfo
 +from strategies.kitten import Kitten, KittenBacktest, KittenInfo
  from strategies.macd import MACD, MACDBacktest, MACDInfo
  from strategies.rsi import RSI, RSIBacktest, RSIInfo
- from strategies.stairs import Stairs, StairsBacktest, StairsInfo
-@@ -237,6 +238,7 @@ class Backtest(QWidget):
+ from strategies.triple_golden_cross import TripleGoldenCross, \
+@@ -234,6 +235,7 @@ class Backtest(QWidget):
+         # NEW STRATEGIES #
          boll_info = BOLLInfo()
-         dual_line_info = DualLineInfo()
          kdj_info = KDJInfo()
 +        kitten_info = KittenInfo()
          macd_info = MACDInfo()
          rsi_info = RSIInfo()
-         stairs_info = StairsInfo()
-@@ -255,6 +257,10 @@ class Backtest(QWidget):
+         triple_golden_cross_info = TripleGoldenCrossInfo()
+@@ -247,6 +249,10 @@ class Backtest(QWidget):
              self.backtest_thread = KDJBacktest(stocks, s_date, e_date,
                                                 init_money, fee,
                                                 pass_fee, tax)
@@ -29,16 +29,16 @@ index 58fc0da..7b22a90 100644
          elif self.current_strategy_name == macd_info.name:
              self.backtest_thread = MACDBacktest(stocks, s_date, e_date,
                                                  init_money, fee,
-@@ -334,6 +340,7 @@ class Backtest(QWidget):
+@@ -321,6 +327,7 @@ class Backtest(QWidget):
+         # NEW STRATEGIES #
          boll_info = BOLLInfo()
-         dual_line_info = DualLineInfo()
          kdj_info = KDJInfo()
 +        kitten_info = KittenInfo()
          macd_info = MACDInfo()
          rsi_info = RSIInfo()
-         stairs_info = StairsInfo()
-@@ -346,6 +353,8 @@ class Backtest(QWidget):
-             backtest = DualLine()
+         triple_golden_cross_info = TripleGoldenCrossInfo()
+@@ -330,6 +337,8 @@ class Backtest(QWidget):
+             backtest = BOLL()
          elif self.current_strategy_name == kdj_info.name:
              backtest = KDJ()
 +        elif self.current_strategy_name == kitten_info.name:
@@ -47,27 +47,27 @@ index 58fc0da..7b22a90 100644
              backtest = MACD()
          elif self.current_strategy_name == rsi_info.name:
 diff --git a/pages/choose.py b/pages/choose.py
-index b4efd96..ad34841 100644
+index 01edc94..e14f533 100644
 --- a/pages/choose.py
 +++ b/pages/choose.py
 @@ -10,6 +10,7 @@ from db.models import AStockIndex
  from strategies.boll import BOLLChoose, BOLLInfo
- from strategies.dual_line import DualLineChoose, DualLineInfo
+ from strategies.common import get_stat_date, get_value_info
  from strategies.kdj import KDJChoose, KDJInfo
 +from strategies.kitten import KittenChoose, KittenInfo
  from strategies.macd import MACDChoose, MACDInfo
  from strategies.mcst import MCSTInfo
  from strategies.percent_change import PercentChangeChoose, PercentChangeInfo
 @@ -48,6 +49,7 @@ class Choose(Plots):
+         # NEW STRATEGIES #
          self.boll_info = BOLLInfo()
-         self.dual_line_info = DualLineInfo()
          self.kdj_info = KDJInfo()
 +        self.kitten_info = KittenInfo()
          self.macd_info = MACDInfo()
          self.mcst_info = MCSTInfo()
          self.percent_change_info = PercentChangeInfo()
-@@ -288,6 +290,8 @@ class Choose(Plots):
-                         self.stocks_to_be_chosen)
+@@ -320,6 +322,8 @@ class Choose(Plots):
+                     self.choose_thread = BOLLChoose(self.stocks_to_be_chosen)
                  elif self.apply_strategies[0] == self.kdj_info.name:
                      self.choose_thread = KDJChoose(self.stocks_to_be_chosen)
 +                elif self.apply_strategies[0] == self.kitten_info.name:
@@ -76,18 +76,18 @@ index b4efd96..ad34841 100644
                      self.choose_thread = MACDChoose(self.stocks_to_be_chosen)
                  elif self.apply_strategies[0] == self.percent_change_info.name:
 diff --git a/pages/nav.py b/pages/nav.py
-index 04ac83d..daffcf6 100644
+index 0a12214..7a923e1 100644
 --- a/pages/nav.py
 +++ b/pages/nav.py
-@@ -14,6 +14,7 @@ from pages.watch import Watch
+@@ -13,6 +13,7 @@ from pages.pool import Pool
+ from pages.watch import Watch
  from strategies.boll import BOLLConfig, BOLLInfo
- from strategies.dual_line import DualLineConfig, DualLineInfo
  from strategies.kdj import KDJConfig, KDJInfo
 +from strategies.kitten import KittenConfig, KittenInfo
  from strategies.macd import MACDConfig, MACDInfo
  from strategies.mcst import MCSTInfo
  from strategies.percent_change import PercentChangeConfig, PercentChangeInfo
-@@ -81,6 +82,7 @@ class Nav(QWidget):
+@@ -77,6 +78,7 @@ class Nav(QWidget):
          self.turn_over_info = TurnOverInfo()
          self.percent_change_info = PercentChangeInfo()
          self.mcst_info = MCSTInfo()
@@ -95,7 +95,7 @@ index 04ac83d..daffcf6 100644
          self.wr_info = WRInfo()
          self.boll_info = BOLLInfo()
          self.macd_info = MACDInfo()
-@@ -127,6 +129,11 @@ class Nav(QWidget):
+@@ -113,6 +115,11 @@ class Nav(QWidget):
                  'choose': 'Y' if self.mcst_info.choose_flag else 'N',
                  'watch': 'Y' if self.mcst_info.watch_flag else 'N'
              },
@@ -107,7 +107,7 @@ index 04ac83d..daffcf6 100644
              {
                  'name': self.wr_info.name,
                  'choose': 'Y' if self.wr_info.choose_flag else 'N',
-@@ -368,6 +375,10 @@ class Nav(QWidget):
+@@ -346,6 +353,10 @@ class Nav(QWidget):
              cfg_dlg = PercentChangeConfig(self)
              cfg_dlg.show()
              cfg_dlg.exec_()
@@ -119,18 +119,18 @@ index 04ac83d..daffcf6 100644
              cfg_dlg = WRConfig(self)
              cfg_dlg.show()
 diff --git a/widgets/plots.py b/widgets/plots.py
-index 678928e..13257c2 100644
+index 6cfa860..38273a0 100644
 --- a/widgets/plots.py
 +++ b/widgets/plots.py
-@@ -7,6 +7,7 @@ from strategies.common import get_latest_batch_data
+@@ -6,6 +6,7 @@ from qtpy.QtWidgets import *
+ from strategies.common import get_latest_batch_data
  from strategies.boll import BOLL
- from strategies.dual_line import DualLine
  from strategies.kdj import KDJ
 +from strategies.kitten import Kitten
  from strategies.macd import MACD
  from strategies.mcst import MCST
  from strategies.rsi import RSI
-@@ -498,6 +499,13 @@ class Plots(QWidget):
+@@ -489,6 +490,13 @@ class Plots(QWidget):
              k_pen_colors = ['y']
              vol_data = []
              vol_pen_colors = []
