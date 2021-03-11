@@ -6,7 +6,7 @@ from qtpy.QtGui import *
 from qtpy.QtCore import *
 
 from conf.conf import strategies_config_path
-from strategies.common import get_latest_batch_data, calc_batch_ma
+from strategies.common import get_latest_batch_data, calc_batch_ma, calc_wpct
 
 
 class KittenInfo:
