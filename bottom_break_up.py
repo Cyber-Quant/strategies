@@ -93,10 +93,10 @@ class BottomBreakUp:
         dates, opens, closes, highs, lows, volumes, amount, turn, pct_chg, \
         ma_price, mv_volume = get_latest_batch_data(code, s_date=s_date,
                                                     e_date=e_date)
-        ma_10 = calc_batch_ma(closes, 10)
-        ma_20 = calc_batch_ma(closes, 20)
-        ma_30 = calc_batch_ma(closes, 30)
-        ma_60 = calc_batch_ma(closes, 60)
+        ma_10 = self.calc_10_ma(closes)
+        ma_20 = self.calc_20_ma(closes)
+        ma_30 = self.calc_30_ma(closes)
+        ma_60 = self.calc_60_ma(closes)
 
         start = self.m + self.n
         buy_prices = []
