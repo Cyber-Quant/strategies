@@ -74,20 +74,26 @@ class BottomBreakUp:
         r_ma_60 = ma_60[::-1]
         r_vol = volumes[::-1]
 
+        fall_flag = False
         for i in range(self.m):
             if r_ma_60[self.n + i] > r_ma_30[self.n + i] > r_ma_20[self.n + i]:
-                for j in range(self.n):
-                    if r_ma_10[j] > r_ma_20[j] \
-                            and r_vol[j] >= 2 * r_vol[j + 1] \
-                            and j < self.n - 1:
-                        return 'b'
-                    else:
-                        return False
+                fall_flag = True
             elif state == 'b' and r_ma_10[0] <= r_ma_30[0] \
                     and r_ma_10[0] <= r_ma_20[0]:
                 return 's'
             else:
-                return False
+                fall_flag = False
+
+        break_up_flag = False
+        for j in range(self.n):
+            if r_ma_10[j] > r_ma_20[j] \
+                    and r_vol[j] >= 2 * r_vol[j + 1] \
+                    and j < self.n - 1:
+                break_up_flag = True
+            else:
+                break_up_flag = False
+
+        return fall_flag and break_up_flag
 
     def backtest(self, code, s_date, e_date, init_money, fee, pass_fee, tax):
         dates, opens, closes, highs, lows, volumes, amount, turn, pct_chg, \
@@ -189,26 +195,32 @@ class BottomBreakUp:
     def choose(self, code):
         dates, opens, closes, highs, lows, volumes, amount, turn, pct_chg, \
         ma_price, ma_volume = get_latest_batch_data(code)
-        r_ma_10 = calc_batch_ma(closes, 10)[::-1]
-        r_ma_20 = calc_batch_ma(closes, 20)[::-1]
-        r_ma_30 = calc_batch_ma(closes, 30)[::-1]
-        r_ma_60 = calc_batch_ma(closes, 60)[::-1]
+        r_ma_10 = self.calc_10_ma(closes)[::-1]
+        r_ma_20 = self.calc_20_ma(closes)[::-1]
+        r_ma_30 = self.calc_30_ma(closes)[::-1]
+        r_ma_60 = self.calc_60_ma(closes)[::-1]
         r_vol = volumes[::-1]
 
         if len(closes) < self.n + self.m:
             return False
 
+        fall_flag = False
         for i in range(self.m):
             if r_ma_60[self.n + i] > r_ma_30[self.n + i] > r_ma_20[self.n + i]:
-                for j in range(self.n):
-                    if r_ma_10[j] > r_ma_20[j] \
-                            and r_vol[j] >= 2 * r_vol[j + 1] \
-                            and j < self.n - 1:
-                        return True
-                    else:
-                        return False
+                fall_flag = True
             else:
-                return False
+                fall_flag = False
+
+        break_up_flag = False
+        for j in range(self.n):
+            if r_ma_10[j] > r_ma_20[j] \
+                    and r_vol[j] >= 2 * r_vol[j + 1] \
+                    and j < self.n - 1:
+                break_up_flag = True
+            else:
+                break_up_flag = False
+
+        return fall_flag and break_up_flag
 
 
 class BottomBreakUpBacktest(QThread):
