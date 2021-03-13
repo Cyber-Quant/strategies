@@ -1,0 +1,152 @@
+diff --git a/pages/backtest.py b/pages/backtest.py
+index c953e9e..0a2f506 100644
+--- a/pages/backtest.py
++++ b/pages/backtest.py
+@@ -11,6 +11,8 @@ from conf.conf import fav_stocks_config_path, FIRST_DAY_YEAR, \
+ from db.models import AStockIndex
+ from strategies.boll import BOLL, BOLLBacktest, BOLLInfo
+ from strategies.kdj import KDJ, KDJBacktest, KDJInfo
++from strategies.lucky_duck_head import LuckyDuckHead, LuckyDuckHeadBacktest, \
++    LuckyDuckHeadInfo
+ from strategies.macd import MACD, MACDBacktest, MACDInfo
+ from strategies.rsi import RSI, RSIBacktest, RSIInfo
+ from strategies.triple_golden_cross import TripleGoldenCross, \
+@@ -233,6 +235,7 @@ class Backtest(QWidget):
+         # NEW STRATEGIES #
+         boll_info = BOLLInfo()
+         kdj_info = KDJInfo()
++        lucky_duck_head_info = LuckyDuckHeadInfo()
+         macd_info = MACDInfo()
+         rsi_info = RSIInfo()
+         triple_golden_cross_info = TripleGoldenCrossInfo()
+@@ -246,6 +249,10 @@ class Backtest(QWidget):
+             self.backtest_thread = KDJBacktest(stocks, s_date, e_date,
+                                                init_money, fee,
+                                                pass_fee, tax)
++        elif self.current_strategy_name == lucky_duck_head_info.name:
++            self.backtest_thread = LuckyDuckHeadBacktest(stocks, s_date, e_date,
++                                                         init_money, fee,
++                                                         pass_fee, tax)
+         elif self.current_strategy_name == macd_info.name:
+             self.backtest_thread = MACDBacktest(stocks, s_date, e_date,
+                                                 init_money, fee,
+@@ -320,6 +327,7 @@ class Backtest(QWidget):
+         # NEW STRATEGIES #
+         boll_info = BOLLInfo()
+         kdj_info = KDJInfo()
++        lucky_duck_head_info = LuckyDuckHeadInfo()
+         macd_info = MACDInfo()
+         rsi_info = RSIInfo()
+         triple_golden_cross_info = TripleGoldenCrossInfo()
+@@ -329,6 +337,8 @@ class Backtest(QWidget):
+             backtest = BOLL()
+         elif self.current_strategy_name == kdj_info.name:
+             backtest = KDJ()
++        elif self.current_strategy_name == lucky_duck_head_info.name:
++            backtest = LuckyDuckHead()
+         elif self.current_strategy_name == macd_info.name:
+             backtest = MACD()
+         elif self.current_strategy_name == rsi_info.name:
+diff --git a/pages/choose.py b/pages/choose.py
+index 01edc94..06ba289 100644
+--- a/pages/choose.py
++++ b/pages/choose.py
+@@ -10,6 +10,7 @@ from db.models import AStockIndex
+ from strategies.boll import BOLLChoose, BOLLInfo
+ from strategies.common import get_stat_date, get_value_info
+ from strategies.kdj import KDJChoose, KDJInfo
++from strategies.lucky_duck_head import LuckyDuckHeadChoose, LuckyDuckHeadInfo
+ from strategies.macd import MACDChoose, MACDInfo
+ from strategies.mcst import MCSTInfo
+ from strategies.percent_change import PercentChangeChoose, PercentChangeInfo
+@@ -48,6 +49,7 @@ class Choose(Plots):
+         # NEW STRATEGIES #
+         self.boll_info = BOLLInfo()
+         self.kdj_info = KDJInfo()
++        self.lucky_duck_head_info = LuckyDuckHeadInfo()
+         self.macd_info = MACDInfo()
+         self.mcst_info = MCSTInfo()
+         self.percent_change_info = PercentChangeInfo()
+@@ -320,6 +322,9 @@ class Choose(Plots):
+                     self.choose_thread = BOLLChoose(self.stocks_to_be_chosen)
+                 elif self.apply_strategies[0] == self.kdj_info.name:
+                     self.choose_thread = KDJChoose(self.stocks_to_be_chosen)
++                elif self.apply_strategies[0] == self.lucky_duck_head_info.name:
++                    self.choose_thread = LuckyDuckHeadChoose(
++                        self.stocks_to_be_chosen)
+                 elif self.apply_strategies[0] == self.macd_info.name:
+                     self.choose_thread = MACDChoose(self.stocks_to_be_chosen)
+                 elif self.apply_strategies[0] == self.percent_change_info.name:
+diff --git a/pages/nav.py b/pages/nav.py
+index 0a12214..8b29892 100644
+--- a/pages/nav.py
++++ b/pages/nav.py
+@@ -13,6 +13,7 @@ from pages.pool import Pool
+ from pages.watch import Watch
+ from strategies.boll import BOLLConfig, BOLLInfo
+ from strategies.kdj import KDJConfig, KDJInfo
++from strategies.lucky_duck_head import LuckyDuckHeadConfig, LuckyDuckHeadInfo
+ from strategies.macd import MACDConfig, MACDInfo
+ from strategies.mcst import MCSTInfo
+ from strategies.percent_change import PercentChangeConfig, PercentChangeInfo
+@@ -76,6 +77,7 @@ class Nav(QWidget):
+         self.volume_increase_info = VolumeIncreaseInfo()
+         self.turn_over_info = TurnOverInfo()
+         self.percent_change_info = PercentChangeInfo()
++        self.lucky_duck_head_info = LuckyDuckHeadInfo()
+         self.mcst_info = MCSTInfo()
+         self.wr_info = WRInfo()
+         self.boll_info = BOLLInfo()
+@@ -108,6 +110,11 @@ class Nav(QWidget):
+                 'choose': 'Y' if self.percent_change_info.choose_flag else 'N',
+                 'watch': 'Y' if self.percent_change_info.watch_flag else 'N'
+             },
++            {
++                'name': self.lucky_duck_head_info.name,
++                'choose': 'Y' if self.lucky_duck_head_info.choose_flag else 'N',
++                'watch': 'Y' if self.lucky_duck_head_info.watch_flag else 'N'
++            },
+             {
+                 'name': self.mcst_info.name,
+                 'choose': 'Y' if self.mcst_info.choose_flag else 'N',
+@@ -346,6 +353,10 @@ class Nav(QWidget):
+             cfg_dlg = PercentChangeConfig(self)
+             cfg_dlg.show()
+             cfg_dlg.exec_()
++        if name == self.lucky_duck_head_info.name:
++            cfg_dlg = LuckyDuckHeadConfig(self)
++            cfg_dlg.show()
++            cfg_dlg.exec_()
+         if name == self.wr_info.name:
+             cfg_dlg = WRConfig(self)
+             cfg_dlg.show()
+diff --git a/widgets/plots.py b/widgets/plots.py
+index 2148093..758b852 100644
+--- a/widgets/plots.py
++++ b/widgets/plots.py
+@@ -6,6 +6,7 @@ from qtpy.QtWidgets import *
+ from strategies.common import get_latest_batch_data
+ from strategies.boll import BOLL
+ from strategies.kdj import KDJ
++from strategies.lucky_duck_head import LuckyDuckHead
+ from strategies.macd import MACD
+ from strategies.mcst import MCST
+ from strategies.rsi import RSI
+@@ -461,6 +462,17 @@ class Plots(QWidget):
+             k_pen_colors = ['r', 'w', 'y']
+             vol_data = []
+             vol_pen_colors = []
++        elif self.current_indicator_name == self.lucky_duck_head_info.name:
++            lucky_duck_head = LuckyDuckHead()
++            fast_ma = lucky_duck_head.calc_fast_ma(closes)
++            slow_ma = lucky_duck_head.calc_slow_ma(closes)
++            base_ma = lucky_duck_head.calc_base_ma(closes)
++            k_data = [fast_ma, slow_ma, base_ma]
++            k_pen_colors = ['r', 'y', 'w']
++            fast_mav = lucky_duck_head.calc_fast_mav(volumes)
++            slow_mav = lucky_duck_head.calc_slow_mav(volumes)
++            vol_data = [fast_mav, slow_mav]
++            vol_pen_colors = ['r', 'y']
+         elif self.current_indicator_name == self.mcst_info.name:
+             mcst = MCST()
+             _mcst = mcst.calc_batch_mcst(volumes, amount,
