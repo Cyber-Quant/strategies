@@ -6,7 +6,7 @@ from qtpy.QtGui import *
 from qtpy.QtCore import *
 
 from conf.conf import strategies_config_path
-from strategies.common import get_latest_batch_data, calc_batch_ma, calc_wpct
+from strategies.common import calc_batch_ma, calc_wpct, get_latest_batch_data
 
 
 class KittenInfo:
@@ -165,7 +165,7 @@ class Kitten:
 
         if len(closes) < 2:
             return False
-            
+
         if 3 <= (closes[-2] - closes[-1]) / closes[-2] * 100 <= 5:
             return True
         else:
