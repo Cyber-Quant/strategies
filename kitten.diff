@@ -76,7 +76,7 @@ index bed7600..5e7b57e 100644
                      self.choose_thread = LuckyDuckHeadChoose(
                          self.stocks_to_be_chosen)
 diff --git a/pages/nav.py b/pages/nav.py
-index 7313fca..ee2c262 100644
+index 8eeb0b3..8350ab2 100644
 --- a/pages/nav.py
 +++ b/pages/nav.py
 @@ -14,6 +14,7 @@ from pages.watch import Watch
@@ -95,9 +95,9 @@ index 7313fca..ee2c262 100644
          self.wr_info = WRInfo()
          self.boll_info = BOLLInfo()
          self.macd_info = MACDInfo()
-@@ -115,6 +117,11 @@ class Nav(QWidget):
-                 'choose': 'Y' if self.mcst_info.choose_flag else 'N',
-                 'watch': 'Y' if self.mcst_info.watch_flag else 'N'
+@@ -120,6 +122,11 @@ class Nav(QWidget):
+                 'choose': 'Y' if self.percent_change_info.choose_flag else 'N',
+                 'watch': 'Y' if self.percent_change_info.watch_flag else 'N'
              },
 +            {
 +                'name': self.kitten_info.name,
@@ -105,8 +105,8 @@ index 7313fca..ee2c262 100644
 +                'watch': 'Y' if self.kitten_info.watch_flag else 'N'
 +            },
              {
-                 'name': self.bottom_break_up_info.name,
-                 'choose': 'Y' if self.bottom_break_up_info.choose_flag else 'N',
+                 'name': self.wr_info.name,
+                 'choose': 'Y' if self.wr_info.choose_flag else 'N',
 @@ -357,6 +364,10 @@ class Nav(QWidget):
              cfg_dlg = BottomBreakUpConfig(self)
              cfg_dlg.show()
