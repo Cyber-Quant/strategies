@@ -1,24 +1,24 @@
 diff --git a/pages/backtest.py b/pages/backtest.py
-index 8884ca4..1fc8597 100644
+index c6e238e..50b65e2 100644
 --- a/pages/backtest.py
 +++ b/pages/backtest.py
-@@ -11,6 +11,7 @@ from conf.conf import fav_stocks_config_path, FIRST_DAY_YEAR, \
- from db.models import AStockIndex
- from strategies.boll import BOLL, BOLLBacktest, BOLLInfo
+@@ -13,6 +13,7 @@ from strategies.boll import BOLL, BOLLBacktest, BOLLInfo
+ from strategies.bottom_break_up import BottomBreakUp, BottomBreakUpBacktest, \
+     BottomBreakUpInfo
  from strategies.kdj import KDJ, KDJBacktest, KDJInfo
 +from strategies.kitten import Kitten, KittenBacktest, KittenInfo
  from strategies.lucky_duck_head import LuckyDuckHead, LuckyDuckHeadBacktest, \
      LuckyDuckHeadInfo
  from strategies.macd import MACD, MACDBacktest, MACDInfo
-@@ -234,6 +235,7 @@ class Backtest(QWidget):
-         # NEW STRATEGIES #
+@@ -237,6 +238,7 @@ class Backtest(QWidget):
          boll_info = BOLLInfo()
+         bottom_break_up_info = BottomBreakUpInfo()
          kdj_info = KDJInfo()
 +        kitten_info = KittenInfo()
          lucky_duck_head_info = LuckyDuckHeadInfo()
          macd_info = MACDInfo()
          rsi_info = RSIInfo()
-@@ -247,6 +249,10 @@ class Backtest(QWidget):
+@@ -254,6 +256,10 @@ class Backtest(QWidget):
              self.backtest_thread = KDJBacktest(stocks, s_date, e_date,
                                                 init_money, fee,
                                                 pass_fee, tax)
@@ -29,16 +29,16 @@ index 8884ca4..1fc8597 100644
          elif self.current_strategy_name == lucky_duck_head_info.name:
              self.backtest_thread = LuckyDuckHeadBacktest(stocks, s_date, e_date,
                                                           init_money, fee,
-@@ -321,6 +327,7 @@ class Backtest(QWidget):
-         # NEW STRATEGIES #
+@@ -329,6 +335,7 @@ class Backtest(QWidget):
          boll_info = BOLLInfo()
+         bottom_break_up_info = BottomBreakUpInfo()
          kdj_info = KDJInfo()
 +        kitten_info = KittenInfo()
          lucky_duck_head_info = LuckyDuckHeadInfo()
          macd_info = MACDInfo()
          rsi_info = RSIInfo()
-@@ -330,6 +337,8 @@ class Backtest(QWidget):
-             backtest = BOLL()
+@@ -340,6 +347,8 @@ class Backtest(QWidget):
+             backtest = BottomBreakUp()
          elif self.current_strategy_name == kdj_info.name:
              backtest = KDJ()
 +        elif self.current_strategy_name == kitten_info.name:
@@ -47,27 +47,27 @@ index 8884ca4..1fc8597 100644
              backtest = LuckyDuckHead()
          elif self.current_strategy_name == macd_info.name:
 diff --git a/pages/choose.py b/pages/choose.py
-index edf079b..7f88de6 100644
+index bed7600..5e7b57e 100644
 --- a/pages/choose.py
 +++ b/pages/choose.py
-@@ -10,6 +10,7 @@ from db.models import AStockIndex
- from strategies.boll import BOLLChoose, BOLLInfo
+@@ -11,6 +11,7 @@ from strategies.boll import BOLLChoose, BOLLInfo
+ from strategies.bottom_break_up import BottomBreakUpChoose, BottomBreakUpInfo
  from strategies.common import get_stat_date, get_value_info
  from strategies.kdj import KDJChoose, KDJInfo
 +from strategies.kitten import KittenChoose, KittenInfo
  from strategies.lucky_duck_head import LuckyDuckHeadChoose, LuckyDuckHeadInfo
  from strategies.macd import MACDChoose, MACDInfo
  from strategies.mcst import MCSTInfo
-@@ -48,6 +49,7 @@ class Choose(Plots):
-         # NEW STRATEGIES #
+@@ -50,6 +51,7 @@ class Choose(Plots):
          self.boll_info = BOLLInfo()
+         self.bottom_break_up_info = BottomBreakUpInfo()
          self.kdj_info = KDJInfo()
 +        self.kitten_info = KittenInfo()
          self.lucky_duck_head_info = LuckyDuckHeadInfo()
          self.macd_info = MACDInfo()
          self.mcst_info = MCSTInfo()
-@@ -320,6 +322,8 @@ class Choose(Plots):
-                     self.choose_thread = BOLLChoose(self.stocks_to_be_chosen)
+@@ -325,6 +327,8 @@ class Choose(Plots):
+                         self.stocks_to_be_chosen)
                  elif self.apply_strategies[0] == self.kdj_info.name:
                      self.choose_thread = KDJChoose(self.stocks_to_be_chosen)
 +                elif self.apply_strategies[0] == self.kitten_info.name:
@@ -76,26 +76,26 @@ index edf079b..7f88de6 100644
                      self.choose_thread = LuckyDuckHeadChoose(
                          self.stocks_to_be_chosen)
 diff --git a/pages/nav.py b/pages/nav.py
-index 17744f5..8278c22 100644
+index 7313fca..ee2c262 100644
 --- a/pages/nav.py
 +++ b/pages/nav.py
-@@ -13,6 +13,7 @@ from pages.pool import Pool
- from pages.watch import Watch
+@@ -14,6 +14,7 @@ from pages.watch import Watch
  from strategies.boll import BOLLConfig, BOLLInfo
+ from strategies.bottom_break_up import BottomBreakUpConfig, BottomBreakUpInfo
  from strategies.kdj import KDJConfig, KDJInfo
 +from strategies.kitten import KittenConfig, KittenInfo
  from strategies.lucky_duck_head import LuckyDuckHeadConfig, LuckyDuckHeadInfo
  from strategies.macd import MACDConfig, MACDInfo
  from strategies.mcst import MCSTInfo
-@@ -77,6 +78,7 @@ class Nav(QWidget):
-         self.percent_change_info = PercentChangeInfo()
+@@ -79,6 +80,7 @@ class Nav(QWidget):
          self.lucky_duck_head_info = LuckyDuckHeadInfo()
          self.mcst_info = MCSTInfo()
+         self.bottom_break_up_info = BottomBreakUpInfo()
 +        self.kitten_info = KittenInfo()
          self.wr_info = WRInfo()
          self.boll_info = BOLLInfo()
          self.macd_info = MACDInfo()
-@@ -113,6 +115,11 @@ class Nav(QWidget):
+@@ -115,6 +117,11 @@ class Nav(QWidget):
                  'choose': 'Y' if self.mcst_info.choose_flag else 'N',
                  'watch': 'Y' if self.mcst_info.watch_flag else 'N'
              },
@@ -105,10 +105,10 @@ index 17744f5..8278c22 100644
 +                'watch': 'Y' if self.kitten_info.watch_flag else 'N'
 +            },
              {
-                 'name': self.wr_info.name,
-                 'choose': 'Y' if self.wr_info.choose_flag else 'N',
-@@ -346,6 +353,10 @@ class Nav(QWidget):
-             cfg_dlg = LuckyDuckHeadConfig(self)
+                 'name': self.bottom_break_up_info.name,
+                 'choose': 'Y' if self.bottom_break_up_info.choose_flag else 'N',
+@@ -357,6 +364,10 @@ class Nav(QWidget):
+             cfg_dlg = BottomBreakUpConfig(self)
              cfg_dlg.show()
              cfg_dlg.exec_()
 +        if name == self.kitten_info.name:
@@ -119,21 +119,21 @@ index 17744f5..8278c22 100644
              cfg_dlg = WRConfig(self)
              cfg_dlg.show()
 diff --git a/widgets/plots.py b/widgets/plots.py
-index 9f37b9f..1ee1e01 100644
+index 765caeb..443fb3e 100644
 --- a/widgets/plots.py
 +++ b/widgets/plots.py
-@@ -6,6 +6,7 @@ from qtpy.QtWidgets import *
- from strategies.common import get_latest_batch_data
+@@ -7,6 +7,7 @@ from strategies.common import get_latest_batch_data
  from strategies.boll import BOLL
+ from strategies.bottom_break_up import BottomBreakUp
  from strategies.kdj import KDJ
 +from strategies.kitten import Kitten
  from strategies.lucky_duck_head import LuckyDuckHead
  from strategies.macd import MACD
  from strategies.mcst import MCST
-@@ -461,6 +462,13 @@ class Plots(QWidget):
-             k_pen_colors = ['r', 'w', 'y']
-             vol_data = []
-             vol_pen_colors = []
+@@ -475,6 +476,13 @@ class Plots(QWidget):
+             mav_10 = bottom_break_up.calc_mav(volumes, 10)
+             vol_data = [mav_5, mav_10]
+             vol_pen_colors = ['r', 'y']
 +        elif self.current_indicator_name == self.kitten_info.name:
 +            kitten = Kitten()
 +            ma = kitten.calc_batch_ma_indicator(closes)
