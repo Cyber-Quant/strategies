@@ -155,7 +155,7 @@ class Kitten:
     def choose(self, code):
         dates, opens, closes, highs, lows, volumes, amount, turn, pct_chg, \
         ma_price, ma_volume = get_latest_batch_data(code)
-        ma = calc_batch_ma(closes, self.m)
+        ma = self.calc_batch_ma_indicator(closes)
         last_ma = 0
         for _ma in ma[-self.n:]:
             if _ma > last_ma:
