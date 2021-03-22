@@ -76,7 +76,7 @@ index cf7b1e8..b858ae1 100644
                      self.choose_thread = LuckyDuckHeadChoose(
                          self.stocks_to_be_chosen)
 diff --git a/pages/nav.py b/pages/nav.py
-index ca3854a..bf42022 100644
+index 7c2969a..acb931a 100644
 --- a/pages/nav.py
 +++ b/pages/nav.py
 @@ -15,6 +15,7 @@ from strategies.alligator import AlligatorConfig, AlligatorInfo
@@ -107,7 +107,7 @@ index ca3854a..bf42022 100644
              {
                  'name': self.boll_info.name,
                  'choose': 'Y' if self.boll_info.choose_flag else 'N',
-@@ -352,6 +359,10 @@ class Nav(QWidget):
+@@ -353,6 +360,10 @@ class Nav(QWidget):
              cfg_dlg = BottomBreakUpConfig(self)
              cfg_dlg.show()
              cfg_dlg.exec_()
@@ -119,7 +119,7 @@ index ca3854a..bf42022 100644
              cfg_dlg = WRConfig(self)
              cfg_dlg.show()
 diff --git a/widgets/plots.py b/widgets/plots.py
-index c913220..5064ab3 100644
+index fd864ae..e4b3d19 100644
 --- a/widgets/plots.py
 +++ b/widgets/plots.py
 @@ -8,6 +8,7 @@ from strategies.alligator import Alligator
